@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from users.views import CustomTokenObtainPairView
+from users.oauth import GoogleLoginView
 
 urlpatterns = [
     path('registration/', RegistrationAPIView.as_view()),
@@ -13,4 +14,6 @@ urlpatterns = [
 
     path('jwt-token/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('jwt-token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    path('google-login/', GoogleLoginView.as_view()),
 ]
