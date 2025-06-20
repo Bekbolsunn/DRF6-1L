@@ -71,7 +71,17 @@ class ProductListCreateAPIView(ListCreateAPIView):
     serializer_class = ProductSerializer
     pagination_class = CustomPagination
     permission_classes = [IsOwner | IsAnonymousReadOnly | IsStaff]
-    authentication_classes = [JWTAuthentication]
+    # authentication_classes = [JWTAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        from django.core.cache import cache
+        chased_data = cache.get('product_list')
+        if chased_data:
+            return Response(data=chased_data, status=status.HTTP_200_OK)
+        response = super().get(request, *args, **kwargs)
+        if response.data.get("count", 0) > 0:
+            cache.set('product_list', response.data, timeout=120)
+        return response
 
     def post(self, request, *args, **kwargs):
         serializer = ProductValidateSerializer(data=request.data)
